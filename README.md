@@ -14,3 +14,19 @@
 
 > 可以在资源地址后面加上查询字符串?fallback禁止base64
 
+### 分包处理
+
+```javascript
+    // src/app.mpx
+    "pages": [ 
+        "pages/index/index",
+        "pages/cart/index",
+        "pages/user/index"
+    ],
+    "subPackages": [
+        {
+        "root": "pagesOther",
+        "pages": [ "other/index"]
+            }
+    ],
+```
