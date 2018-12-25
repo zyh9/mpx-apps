@@ -12,14 +12,24 @@ var webpackConf = {
         test: /\.mpx$/,
         use: MpxWebpackPlugin.loader({
           transRpx: false,
-          comment: 'use rpx',
-          compileBindEvent: true
+          comment: 'use rpx'
         })
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test'), resolve('node_modules/@mpxjs')]
+      },
+      {
+        test: /\.json$/,
+        resourceQuery: /__component/,
+        type: 'javascript/auto'
+      },
+      {
+        test: /\.wxs$/,
+        use: MpxWebpackPlugin.wxsLoader(),
+        type: 'javascript/auto',
+        issuer: /(\.wxml|\.mpx)$/
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
@@ -39,9 +49,13 @@ var webpackConf = {
       name: 'bundle'
     },
     splitChunks: {
-      chunks: 'all',
-      name: 'bundle',
-      minChunks: 2
+      cacheGroups: {
+        bundle: {
+          chunks: 'all',
+          name: 'bundle',
+          minChunks: 2
+        }
+      }
     }
   },
   mode: 'none',
@@ -52,9 +66,8 @@ var webpackConf = {
   ],
   resolve: {
     extensions: ['.js', '.mpx'],
-    modules: ["node_modules"]
+    modules: ['node_modules']
   }
 }
-
 
 module.exports = webpackConf

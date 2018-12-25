@@ -14,11 +14,12 @@ program
 
 function runWebpack (cfg) {
   if (program.production || program.watch) {
-    cfg = merge(cfg, program.production ? {
-      mode: 'production'
-    } : {
-      cache: true
-    })
+    const extendCfg = program.production ? { mode: 'production' } : { cache: true }
+    if (Array.isArray(cfg)) {
+      cfg = cfg.map(item => merge(item, extendCfg))
+    } else {
+      cfg = merge(cfg, extendCfg)
+    }
   }
   if (process.env.npm_config_report) {
     var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -38,9 +39,10 @@ function callback (err, stats) {
   process.stdout.write(stats.toString({
     colors: true,
     modules: false,
-    children: true,
+    children: false,
     chunks: false,
-    chunkModules: false
+    chunkModules: false,
+    entrypoints: false
   }) + '\n\n')
 
   console.log(chalk.cyan('  Build complete.\n'))

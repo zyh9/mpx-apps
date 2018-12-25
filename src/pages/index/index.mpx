@@ -37,7 +37,6 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "首页",
     "navigationBarTextStyle": "black",
-    //组件引入
     "usingComponents": {
       "list": "../../components/list/list"
     }
