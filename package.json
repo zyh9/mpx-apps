@@ -13,11 +13,11 @@
   "author": "zyh9 <1124596031@qq.com>",
   "license": "ISC",
   "dependencies": {
-    "@mpxjs/core": "^1.0.21"
+    "@mpxjs/core": "^1.0.26"
   },
   "devDependencies": {
     "@mpxjs/url-loader": "^1.0.15",
-    "@mpxjs/webpack-plugin": "^1.0.25",
+    "@mpxjs/webpack-plugin": "^1.0.26",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-runtime": "^6.23.0",
