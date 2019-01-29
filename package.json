@@ -13,7 +13,7 @@
   "author": "zyh9 <1124596031@qq.com>",
   "license": "ISC",
   "dependencies": {
-    "@mpxjs/core": "^1.0.26"
+    "@mpxjs/core": "^1.0.27"
   },
   "devDependencies": {
     "@mpxjs/url-loader": "^1.0.15",
