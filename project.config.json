@@ -7,5 +7,7 @@
 	"appid": "touristappid",
 	"projectname": "mpx",
 	"description": "A mpx project",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {}
 }

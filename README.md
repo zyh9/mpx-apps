@@ -23,10 +23,7 @@
         "pages/cart/index",
         "pages/user/index"
     ],
-    "subPackages": [
-        {
-        "root": "pagesOther",
-        "pages": [ "other/index"]
-            }
+    "packages":[
+        "./pagesOther/index?root=pagesOther"
     ],
 ```

@@ -18,7 +18,7 @@
       other(){
         console.log(111)
         wx.navigateTo({ 
-          url: '/pagesOther/other/index' 
+          url: '/pagesOther/other' 
         })
       }
     },
@@ -38,7 +38,7 @@
     "navigationBarTitleText": "首页",
     "navigationBarTextStyle": "black",
     "usingComponents": {
-      "list": "../../components/list/list"
+      "list": "../components/list"
     }
   }
 </script>

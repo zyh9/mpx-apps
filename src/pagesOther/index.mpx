@@ -1,0 +1,11 @@
+<script>
+  App({})
+</script>
+
+<script type="application/json">
+  {
+    "pages": [ 
+      "./other"
+    ]
+  }
+</script>

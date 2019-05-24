@@ -5,7 +5,54 @@ var chalk = require('chalk')
 var webpack = require('webpack')
 var merge = require('webpack-merge')
 var program = require('commander')
-var webpackConfig = require('./webpack.main.conf')
+const MpxWebpackPlugin = require('@mpxjs/webpack-plugin')
+var webpackMainConfig = require('./webpack.main.conf')
+var webpackWxConfig = require('./webpack.wx.conf')
+
+var webpackConfigArr = []
+let isPluginProject = false
+const userSelectedMode = 'wx'
+
+function resolveDist (file, pathStr = '../dist') {
+  return path.resolve(__dirname, pathStr, file || '')
+}
+
+const supportedCrossMode = ['wx', 'ali', 'swan', 'qq', 'tt']
+const npmConfigArgvOriginal = (process.env.npm_config_argv && JSON.parse(process.env.npm_config_argv).original) || []
+const modeArr = npmConfigArgvOriginal.filter(item => typeof item === 'string').map(item => item.replace('--', '')).filter(item => supportedCrossMode.includes(item))
+
+if ((isPluginProject && userSelectedMode === 'wx') || modeArr.length === 0) {
+  webpackConfigArr.push(merge(userSelectedMode === 'wx' ? webpackWxConfig : webpackMainConfig, {
+    output: {
+      path: resolveDist('', '../dist/')
+    },
+    plugins: [
+      new MpxWebpackPlugin({
+        mode: 'wx',
+        srcMode: 'wx'
+      })
+    ]
+  }))
+} else {
+  modeArr.forEach(item => {
+    const webpackCrossConfig = merge(item === 'wx' ? webpackWxConfig : webpackMainConfig, {
+      name: item + '-compiler',
+      output: {
+        path: resolveDist('', '../dist/' + item)
+      },
+      plugins: [
+        new MpxWebpackPlugin({
+          mode: item,
+          srcMode: 'wx'
+        })
+      ]
+    })
+    webpackConfigArr.push(webpackCrossConfig)
+  })
+}
+
+var prodEnv = require('../config/prod.env')
+var devEnv = require('../config/dev.env')
 
 program
   .option('-w, --watch', 'watch mode')
@@ -13,6 +60,13 @@ program
   .parse(process.argv)
 
 function runWebpack (cfg) {
+  // env
+  if (Array.isArray(cfg)) {
+    cfg.forEach(item => item.plugins.unshift(new webpack.DefinePlugin(program.production ? prodEnv : devEnv)))
+  } else {
+    cfg.plugins.unshift(new webpack.DefinePlugin(program.production ? prodEnv : devEnv))
+  }
+
   if (program.production || program.watch) {
     const extendCfg = program.production ? { mode: 'production' } : { cache: true }
     if (Array.isArray(cfg)) {
@@ -36,14 +90,28 @@ function runWebpack (cfg) {
 function callback (err, stats) {
   spinner.stop()
   if (err) return console.error(err)
-  process.stdout.write(stats.toString({
-    colors: true,
-    modules: false,
-    children: false,
-    chunks: false,
-    chunkModules: false,
-    entrypoints: false
-  }) + '\n\n')
+  if (Array.isArray(stats.stats)) {
+    stats.stats.forEach(item => {
+      console.log(item.compilation.name + '打包结果：')
+      process.stdout.write(item.toString({
+        colors: true,
+        modules: false,
+        children: false,
+        chunks: false,
+        chunkModules: false,
+        entrypoints: false
+      }) + '\n\n')
+    })
+  } else {
+    process.stdout.write(stats.toString({
+      colors: true,
+      modules: false,
+      children: false,
+      chunks: false,
+      chunkModules: false,
+      entrypoints: false
+    }) + '\n\n')
+  }
 
   console.log(chalk.cyan('  Build complete.\n'))
   if (program.watch) {
@@ -54,7 +122,14 @@ function callback (err, stats) {
 var spinner = ora('building...')
 spinner.start()
 
-rm(path.resolve(__dirname, '../dist/*'), err => {
-  if (err) return console.error(err)
-  runWebpack(webpackConfig)
-})
+try {
+  rm.sync(path.resolve(__dirname, '../dist/*'))
+} catch (e) {
+  console.error(e)
+  console.log('\n\n删除dist文件夹遇到了一些问题，如果遇到问题请手工删除dist重来\n\n')
+}
+if (webpackConfigArr.length === 1) {
+  runWebpack(webpackConfigArr[0])
+} else {
+  runWebpack(webpackConfigArr)
+}
