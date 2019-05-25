@@ -11,7 +11,7 @@
       "./pages/user"
     ],
     "packages":[
-			"./pagesOther/index?root=pagesOther"
+			"./pagesOther/app?root=pagesOther"
 		],
     "window": {
 			"backgroundTextStyle": "light",

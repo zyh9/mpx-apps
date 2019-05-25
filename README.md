@@ -19,11 +19,18 @@
 ```javascript
     // src/app.mpx
     "pages": [ 
-        "pages/index/index",
-        "pages/cart/index",
-        "pages/user/index"
+        "./pages/index",
+        "./pages/cart",
+        "./pages/user"
     ],
-    "packages":[
-        "./pagesOther/index?root=pagesOther"
+    "packages":[//分包配置 => 添加分包相对路径  参数解析为root:pagesOther
+        "./pagesOther/app?root=pagesOther"
     ],
+```
+
+```javascript
+    // src/pagesOther/app.mpx
+    "pages": [//页面相对路径
+        "./other"
+    ]
 ```
